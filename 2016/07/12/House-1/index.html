@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>【数据找房】1 用爬虫搜寻房屋数据 | ZhangAnam</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="愁，一年过去了，买房的事情还是没有落实。学区、地铁、房龄、地段、价格、面积、升值潜力…(+﹏+)~
+看到一个知乎帖子，启发了我，我是个DT时代的程序员，用数据说话是基本的职业素养！
+所以开始用数据找房，加油！
+&amp;rarr;_&amp;rarr;再分析也改不了房价高的基本事实">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【数据找房】1 用爬虫搜寻房屋数据">
+<meta property="og:url" content="https://zhanganam.github.io/2016/07/12/House-1/index.html">
+<meta property="og:site_name" content="ZhangAnam">
+<meta property="og:description" content="愁，一年过去了，买房的事情还是没有落实。学区、地铁、房龄、地段、价格、面积、升值潜力…(+﹏+)~
+看到一个知乎帖子，启发了我，我是个DT时代的程序员，用数据说话是基本的职业素养！
+所以开始用数据找房，加油！
+&amp;rarr;_&amp;rarr;再分析也改不了房价高的基本事实">
+<meta property="og:image" content="http://zhanganam.github.io/public/img/t-house.jpg">
+<meta property="og:image" content="http://zhanganam.github.io/public/img/t-house2.jpg">
+<meta property="og:updated_time" content="2016-08-03T08:01:52.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【数据找房】1 用爬虫搜寻房屋数据">
+<meta name="twitter:description" content="愁，一年过去了，买房的事情还是没有落实。学区、地铁、房龄、地段、价格、面积、升值潜力…(+﹏+)~
+看到一个知乎帖子，启发了我，我是个DT时代的程序员，用数据说话是基本的职业素养！
+所以开始用数据找房，加油！
+&amp;rarr;_&amp;rarr;再分析也改不了房价高的基本事实">
+<meta name="twitter:image" content="http://zhanganam.github.io/public/img/t-house.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="ZhangAnam" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">ZhangAnam</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">A clay idol who want to be Avalokitesvara!</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="Flux RSS"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://zhanganam.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-House-1" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/07/12/House-1/" class="article-date">
+  <time datetime="2016-07-11T16:00:00.000Z" itemprop="datePublished">2016-07-12</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/数据分析/">数据分析</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      【数据找房】1 用爬虫搜寻房屋数据
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>愁，一年过去了，买房的事情还是没有落实。<br>学区、地铁、房龄、地段、价格、面积、升值潜力…(+﹏+)~</p>
+<p>看到一个<a href="https://www.zhihu.com/question/21608484/answer/110413304" target="_blank" rel="external">知乎帖子</a>，启发了我，我是个DT时代的程序员，用数据说话是基本的职业素养！</p>
+<p>所以开始用数据找房，加油！</p>
+<p><em>&rarr;_&rarr;再分析也改不了房价高的基本事实</em><br><a id="more"></a></p>
+<p>前辈有开放代码的<a href="http://lanbing510.info/2016/03/15/Lianjia-Spider.html" title="链家爬虫" target="_blank" rel="external">链家爬虫</a>，不需要从头开始，但是链家的前端发生了变化，程序需要调整。另外，这段代码还有一些有效信息没有抓取，需要扩展。</p>
+<p>前辈程序中HTML解析用了<a href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/" target="_blank" rel="external">BeautifulSoup</a>，这个库已经足够使用了。</p>
+<p>前辈使用了SQLite，我打算使用MySQL，没有理由。</p>
+<h2 id="1-提取小区信息，在小区页可以获取全部小区"><a href="#1-提取小区信息，在小区页可以获取全部小区" class="headerlink" title="1. 提取小区信息，在小区页可以获取全部小区"></a>1. 提取小区信息，在小区页可以获取全部小区</h2><ul>
+<li><p>基本信息，例如<code>小区ID</code>、<code>行政区</code>、<code>商圈</code>、<code>平均单价</code></p>
+<p>  <code>http://城市拼音简写.lianjia.com/xiaoqu/区县的拼音全写/ &lt;br/&gt; 例如：天津市东丽区中城市拼音简写是tj，区县的拼音全写是dongli</code></p>
+</li>
+<li><p>小区价格趋势</p>
+<p>  <code>http://城市拼音简写.lianjia.com/fangjia/priceTrend/c小区ID</code></p>
+</li>
+</ul>
+<ul>
+<li><p>小区户型</p>
+<p>  <code>http://城市拼音简写.lianjia.com/xiaoqu/小区ID/huxing/</code></p>
+</li>
+</ul>
+<h2 id="2-提取小区成交记录"><a href="#2-提取小区成交记录" class="headerlink" title="2. 提取小区成交记录"></a>2. 提取小区成交记录</h2><p><code>http://城市拼音简写.lianjia.com/chengjiao/c小区ID/pg页码</code></p>
+<h2 id="3-提取小区在售房源信息"><a href="#3-提取小区在售房源信息" class="headerlink" title="3. 提取小区在售房源信息"></a>3. 提取小区在售房源信息</h2><ul>
+<li><p>在售信息</p>
+<p>  <code>http://城市拼音简写.lianjia.com/ershoufang/pg页码c房源ID/</code></p>
+</li>
+<li><p>房源具体信息</p>
+<p>  <code>http://城市拼音简写.lianjia.com/ershoufang/housestat?hid=房源ID&amp;rid=小区ID 这是json格式的数据</code></p>
+</li>
+</ul>
+<h2 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h2><p><strong>GIS是我的老本行，所以GIS相关的只是不表述</strong></p>
+<p>将所有的二手房描绘在地图上，如下图：</p>
+<p><img src="http://zhanganam.github.io/public/img/t-house.jpg" alt="天津市主城区二手房价格与区域关系"></p>
+<p>图中地图底图是OpenStreetMap下载的公开数据</p>
+<p><img src="http://zhanganam.github.io/public/img/t-house2.jpg" alt="天津市主城区二手房价格与区域关系"></p>
+<p>图中地图底图是天地图的在线地图数据</p>
+<p>图中颜色越深，二手房单价越高。从图中开一看出几个简单的结论:</p>
+<ol>
+<li>以海河为界，海河西侧比海河东侧市场更大，价格也相对更高</li>
+<li>以和平区为重的，向四周发散，内环以内、内环与中环之间、中环与外环之间的房价阶梯比较明显</li>
+<li>在图中可以看出城市外环附近有几个小区域价格也很高，例如梅江、西青高新区、机场工业区，这些区域与新的产业政策布局有关；另外东丽湖区域价格也相对较高，这块区域是别墅区。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://zhanganam.github.io/2016/07/12/House-1/" data-id="ciwovizet000aef41ef0di3on" class="article-share-link">Partager</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BeautifulSoup/">BeautifulSoup</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spider/">spider</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/房/">房</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/07/18/BeautifulSoup/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Récent</strong>
+      <div class="article-nav-title">
+        
+          【学习笔记】BeautifulSoup－爬虫文档解析器
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/07/11/Mrakdown/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Ancien</strong>
+      <div class="article-nav-title">Markdown 11种基本语法</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Catégories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Markdown/">Markdown</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据分析/">数据分析</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/机器视觉/">机器视觉</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Mot-clés</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/BeautifulSoup/">BeautifulSoup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ES/">ES</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Markdown/">Markdown</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenCV/">OpenCV</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spider/">spider</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/房/">房</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/爬虫/">爬虫</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Nuage de mot-clés</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/BeautifulSoup/" style="font-size: 20px;">BeautifulSoup</a> <a href="/tags/ES/" style="font-size: 10px;">ES</a> <a href="/tags/Markdown/" style="font-size: 10px;">Markdown</a> <a href="/tags/OpenCV/" style="font-size: 20px;">OpenCV</a> <a href="/tags/git/" style="font-size: 20px;">git</a> <a href="/tags/spider/" style="font-size: 10px;">spider</a> <a href="/tags/房/" style="font-size: 20px;">房</a> <a href="/tags/爬虫/" style="font-size: 10px;">爬虫</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Articles récents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/07/19/git-patch/">两个commit的差异保存到本地</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/18/ElasticSearch-Intro/">【学习笔记】ElasticSearch入门</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/18/BeautifulSoup/">【学习笔记】BeautifulSoup－爬虫文档解析器</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/12/House-1/">【数据找房】1 用爬虫搜寻房屋数据</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/11/Mrakdown/">Markdown 11种基本语法</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 ZhangAnam<br>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

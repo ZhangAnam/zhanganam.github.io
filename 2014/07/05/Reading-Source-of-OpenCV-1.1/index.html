@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>【OpenCV源码阅读】1.1 Mat的结构 | ZhangAnam</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="#OpenCV源码阅读#
+抱着学习的态度，阅读OpenCV源码。我阅读的版本是OpenCV2.4.8，其实2.X在思路上是很相似的。OpenCV自带了详尽的文档。其中：
+
+opencv_tutorials.pdf是OpenCV入门文档，该文档中有大量的示例；
+opencv2refman.pdf是函数手册。
+
+这两个文档是重要的参考资料，使用好两本文档就能使用OpenCV最重要的功能里。
+##第一章">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【OpenCV源码阅读】1.1 Mat的结构">
+<meta property="og:url" content="https://zhanganam.github.io/2014/07/05/Reading-Source-of-OpenCV-1.1/index.html">
+<meta property="og:site_name" content="ZhangAnam">
+<meta property="og:description" content="#OpenCV源码阅读#
+抱着学习的态度，阅读OpenCV源码。我阅读的版本是OpenCV2.4.8，其实2.X在思路上是很相似的。OpenCV自带了详尽的文档。其中：
+
+opencv_tutorials.pdf是OpenCV入门文档，该文档中有大量的示例；
+opencv2refman.pdf是函数手册。
+
+这两个文档是重要的参考资料，使用好两本文档就能使用OpenCV最重要的功能里。
+##第一章">
+<meta property="og:image" content="http://img.blog.csdn.net/20140705153226687?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvenluaW5jcXVwdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="http://latex.codecogs.com/gif.latex?A%3D%5Cbegin%7Bbmatrix%7D%201%20%262%20%263%20%5C%5C%204%20%265%20%266%20%5C%5C%207%20%268%20%269%20%5Cend%7Bbmatrix%7D =114x67">
+<meta property="og:image" content="http://latex.codecogs.com/gif.latex?B%3D%5Cbegin%7Bbmatrix%7D%204%20%265%20%266%20%5C%5C%207%20%268%20%269%20%5Cend%7Bbmatrix%7D =112x45">
+<meta property="og:updated_time" content="2016-07-18T14:34:29.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【OpenCV源码阅读】1.1 Mat的结构">
+<meta name="twitter:description" content="#OpenCV源码阅读#
+抱着学习的态度，阅读OpenCV源码。我阅读的版本是OpenCV2.4.8，其实2.X在思路上是很相似的。OpenCV自带了详尽的文档。其中：
+
+opencv_tutorials.pdf是OpenCV入门文档，该文档中有大量的示例；
+opencv2refman.pdf是函数手册。
+
+这两个文档是重要的参考资料，使用好两本文档就能使用OpenCV最重要的功能里。
+##第一章">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20140705153226687?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvenluaW5jcXVwdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+  
+    <link rel="alternate" href="/atom.xml" title="ZhangAnam" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">ZhangAnam</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">A clay idol who want to be Avalokitesvara!</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="Flux RSS"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://zhanganam.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Reading-Source-of-OpenCV-1.1" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/05/Reading-Source-of-OpenCV-1.1/" class="article-date">
+  <time datetime="2014-07-04T16:00:00.000Z" itemprop="datePublished">2014-07-05</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/机器视觉/">机器视觉</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      【OpenCV源码阅读】1.1 Mat的结构
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>#OpenCV源码阅读#</p>
+<p>抱着学习的态度，阅读OpenCV源码。我阅读的版本是OpenCV<code>2.4.8</code>，其实2.X在思路上是很相似的。OpenCV自带了详尽的文档。其中：</p>
+<ul>
+<li><code>opencv_tutorials.pdf</code>是OpenCV入门文档，该文档中有大量的示例；</li>
+<li><code>opencv2refman.pdf</code>是函数手册。</li>
+</ul>
+<p>这两个文档是重要的参考资料，使用好两本文档就能使用OpenCV最重要的功能里。</p>
+<p>##第一章 Mat##</p>
+<p>本章主要内容：<code>Mat类的结构</code>、<code>内存管理</code>、<code>运算</code>、<code>_InputArray类</code></p>
+<a id="more"></a>
+<p>Mat是OpenCV中最关键的类之一，破解Mat类对把握OpenCV有重要作用，同时通过这部分阅读可以了解OpenCV的设计理念。</p>
+<p>Mat是Matrix的简称，中文含义是矩阵，OpenCV2.x摒弃了1.x中区别对待IplImage、CvMat等结构的思路，将所有的问题划归到数学概念中去，图像在线性空间中的表达就是矩阵。</p>
+<p>另外，OpenCV中定义了Matx（小矩阵）的结构，Vec（向量）是Matx的子类。他们通过_InputArray（输入数组）类实现相互转换。在矩阵运算、图像处理等函数中，通过以<em>InputArray类为代理，访问Mat或Vec。Mat</em><t>是Mat的子类，是Mat的模板化。</t></p>
+<p>本章主要涉及文件有：</p>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>File</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>include/opencv2/core/</td>
+<td>core.hpp</td>
+<td>其中有Mat类定义</td>
+</tr>
+<tr>
+<td></td>
+<td>mat.hpp</td>
+<td>其中有Mat类实现</td>
+</tr>
+<tr>
+<td></td>
+<td>types_c.h</td>
+<td>C语言类型定义和部分函数</td>
+</tr>
+<tr>
+<td>modules/core/src/</td>
+<td>arithm.cpp</td>
+<td>算法实现</td>
+</tr>
+<tr>
+<td></td>
+<td>matop.cpp</td>
+<td>Mat的运算</td>
+</tr>
+</tbody>
+</table>
+<p>###1.1 Mat的结构###<br><strong>【core.hpp 1475-2010行】【opencv2refman.pdf 25-44页】</strong></p>
+<p>####1.1.1 Mat中成员变量####</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/*! includes several bit-fields:</span></div><div class="line"> the magic signature （魔法值）</div><div class="line"> continuity flag      （连续标记）</div><div class="line"> depth （深度）</div><div class="line"> number of channels （通道数）</div><div class="line"> */</div><div class="line"><span class="keyword">int</span> flags;  </div><div class="line"><span class="comment">//! the matrix dimensionality, &gt;= 2  （维度）</span></div><div class="line"><span class="keyword">int</span> dims;  </div><div class="line"><span class="comment">//! the number of rows and columns or (-1, -1) when the matrix has more than 2 dimensions  （行列数）</span></div><div class="line"><span class="keyword">int</span> rows, cols;  </div><div class="line"><span class="comment">//! pointer to the data  </span></div><div class="line">uchar* data;  </div><div class="line"></div><div class="line"><span class="comment">//! pointer to the reference counter;  </span></div><div class="line"><span class="comment">// when matrix points to user-allocated data, the pointer is NULL  </span></div><div class="line"><span class="keyword">int</span>* refcount;  </div><div class="line"></div><div class="line"><span class="comment">//! helper fields used in locateROI and adjustROI  </span></div><div class="line">uchar* datastart;  </div><div class="line">uchar* dataend;  </div><div class="line">uchar* datalimit;  </div><div class="line"></div><div class="line"><span class="comment">//! custom allocator （自定义分配器）</span></div><div class="line">MatAllocator* allocator;</div><div class="line"></div><div class="line">MSize size;  </div><div class="line">MStep step;</div></pre></td></tr></table></figure>
+<ul>
+<li><strong>（1）flag 标记，由五部分组成：</strong></li>
+</ul>
+<p><img src="http://img.blog.csdn.net/20140705153226687?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvenluaW5jcXVwdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="flag"><br><strong>1、0-2位 depth 深度，在types_c.h中深度值如下：</strong></p>
+<table>
+<thead>
+<tr>
+<th>宏</th>
+<th>10</th>
+<th>2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CV_8U</td>
+<td>0</td>
+<td>0x000</td>
+</tr>
+<tr>
+<td>CV_8S</td>
+<td>1</td>
+<td>0x001</td>
+</tr>
+<tr>
+<td>CV_16U</td>
+<td>2</td>
+<td>0x010</td>
+</tr>
+<tr>
+<td>CV_16S</td>
+<td>3</td>
+<td>0x011</td>
+</tr>
+<tr>
+<td>CV_32S</td>
+<td>4</td>
+<td>0x100</td>
+</tr>
+<tr>
+<td>CV_32F</td>
+<td>5</td>
+<td>0x101</td>
+</tr>
+<tr>
+<td>CV_64F</td>
+<td>6</td>
+<td>0x110</td>
+</tr>
+<tr>
+<td>CV_USRTYPE1</td>
+<td>7</td>
+<td>0x111</td>
+</tr>
+</tbody>
+</table>
+<p><strong>2、3-11位 channel 通道数（减1）</strong></p>
+<p>灰度图像（1通道）时3-11位是0x000000000，彩色图像（3通道）时3-11位是0x000000010</p>
+<p><strong>3、14位：MAT_CONT_FLAG 连续标记</strong></p>
+<p>矩阵的数据存储是否连续的标记，1表示连续，0表示不连续</p>
+<p><strong>4、15位：SUBMAT_FLAG，子矩阵标记</strong></p>
+<p>Mat支持从大矩阵中取出子矩阵，数据没有复制。子矩阵为1，否则为0。</p>
+<p>例如，假设Mat A是3×3的矩阵</p>
+<p><img src="http://latex.codecogs.com/gif.latex?A%3D%5Cbegin%7Bbmatrix%7D%201%20%262%20%263%20%5C%5C%204%20%265%20%266%20%5C%5C%207%20%268%20%269%20%5Cend%7Bbmatrix%7D =114x67" alt="Matrix A"></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Mat B = A.rowRange(<span class="number">1</span>,<span class="number">2</span>);<span class="comment">//B取A的第2到3行，行号以0开始</span></div></pre></td></tr></table></figure>
+<p>则</p>
+<p><img src="http://latex.codecogs.com/gif.latex?B%3D%5Cbegin%7Bbmatrix%7D%204%20%265%20%266%20%5C%5C%207%20%268%20%269%20%5Cend%7Bbmatrix%7D =112x45" alt="Matrix B"></p>
+<p>B的数据并没有新增加，而是直接指向了A的数据，B的datastart和dataend表明了起止位置，rows和cols表明了尺寸。具体将在Mat的内存管理中说明。</p>
+<p><strong>5、16-31位：MAGIC_VAL 魔法值，矩阵类型</strong></p>
+<p>由于矩阵有很多种类型。图像处理函数中以_InputArray为输入图像，此时就需要依赖这个量来判断数据原始类型。</p>
+<p>查看源码可以知道：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+<th>MAGIC_VAL值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SparseMat</td>
+<td>系数矩阵</td>
+<td>0x42FD0000</td>
+</tr>
+<tr>
+<td>Mat</td>
+<td>矩阵</td>
+<td>0x42FF0000</td>
+</tr>
+<tr>
+<td>cvMat</td>
+<td>C矩阵</td>
+<td>0x42420000</td>
+</tr>
+<tr>
+<td>CvMatND</td>
+<td>C多维矩阵</td>
+<td>0x42430000</td>
+</tr>
+<tr>
+<td>CvSparseMat</td>
+<td>C稀疏矩阵</td>
+<td>0x42440000</td>
+</tr>
+<tr>
+<td>CvHistogram</td>
+<td>C直方图</td>
+<td>0x42450000</td>
+</tr>
+<tr>
+<td>CvMemStorage</td>
+<td>C内存存储</td>
+<td>0x42890000</td>
+</tr>
+<tr>
+<td>CvSeq</td>
+<td>C队列</td>
+<td>0x42990000</td>
+</tr>
+<tr>
+<td>CvSet</td>
+<td>C集合</td>
+<td>0x42980000</td>
+</tr>
+<tr>
+<td>IPLImage</td>
+<td>IPL图像</td>
+<td>0x00000070</td>
+</tr>
+</tbody>
+</table>
+<p>他们都是类或结构体的前两个字节（int）。IPLImage来自以往的库，他的前两个字节是int  nSize，是结构体的大小，所以他的MAGIC_VAL是0x00000070</p>
+<ul>
+<li><p><strong>（2）dims是维度（一般是2），rows是行数，cols是列数</strong></p>
+<p>  当维度不为2时，rows=cols=-1</p>
+</li>
+<li><p><strong>（3）data指针指向了数据；refcount指针指向了一个计数器；allocator是动态内存申请器。</strong></p>
+<p>  计数器记录着多少个Mat指向了同一块data，当计数为0时，释放data</p>
+</li>
+<li><p><strong>（4）step保存了一行的宽度</strong></p>
+<p>  完整连续的图像step.p[0]与cols相等，子矩阵的step.p[0]与原始图像的cols相等。</p>
+</li>
+</ul>
+<p>####1.1.2 Mat的构造函数、赋值运算符、数据类型转换运算符####</p>
+<p>构造函数、赋值运算、类型转换都有数据转换能力：</p>
+<ul>
+<li><strong>（1）构造函数</strong></li>
+</ul>
+<p>1、空构造函数【1690行】</p>
+<p>2、指定尺寸和类型【1692行】，或由Scalar结构定义尺寸和类型【1696行】</p>
+<p>3、高维【1700行】</p>
+<p>4、从其他Mat拷贝【1704行】</p>
+<p>5、从数据块拷贝并指定尺寸和类型【1706行】</p>
+<p>6、只定义一个头，数据指向其他Mat中一部分（行列范围、ROI）【1711行】</p>
+<p>7、从老式的CvMat、CvMatND、IplImage转换成Mat【1715-1719行】</p>
+<p>8、从新式的std::vector、cv::Vec、cv::Matx、2D point、3D point、comma initializer转换成Mat【1722-1731行】</p>
+<ul>
+<li><strong>（2）赋值运算</strong></li>
+</ul>
+<p>9、const Mat&amp; m从另一个Mat转换【1740行】</p>
+<p>10、const MatExpr&amp; expr从矩阵表达式转换成Mat【1741行】</p>
+<pre><code>矩阵表达式MatExpr，构造了一个运算结构，具体在Mat的计算中解释
+</code></pre><p>11、const Scalar&amp; s从Scalar转换成Mat，是用一种颜色将整个图像填充【1774行】</p>
+<ul>
+<li><strong>（3）数据转换运算</strong></li>
+</ul>
+<p>12、括号运算符：截取子矩阵【1842-1844行】</p>
+<p>13、数据转换：由Mat转换成老式结构CvMat、CvMatND、IplImage【1846-1851行】</p>
+<p>14、数据转换：由Mat转换成vector<_tp>、Vec<_tp, n="">、Matx<_tp, m,="" n="">【1853-1855行】</_tp,></_tp,></_tp></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://zhanganam.github.io/2014/07/05/Reading-Source-of-OpenCV-1.1/" data-id="ciwovizea0000ef41urtt97i6" class="article-share-link">Partager</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenCV/">OpenCV</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2014/07/12/Reading-Source-of-OpenCV-1.2/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Récent</strong>
+      <div class="article-nav-title">
+        
+          【OpenCV源码阅读】1.2 Mat的内存管理
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Catégories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Markdown/">Markdown</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据分析/">数据分析</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/机器视觉/">机器视觉</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Mot-clés</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/BeautifulSoup/">BeautifulSoup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ES/">ES</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Markdown/">Markdown</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenCV/">OpenCV</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spider/">spider</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/房/">房</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/爬虫/">爬虫</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Nuage de mot-clés</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/BeautifulSoup/" style="font-size: 20px;">BeautifulSoup</a> <a href="/tags/ES/" style="font-size: 10px;">ES</a> <a href="/tags/Markdown/" style="font-size: 10px;">Markdown</a> <a href="/tags/OpenCV/" style="font-size: 20px;">OpenCV</a> <a href="/tags/git/" style="font-size: 20px;">git</a> <a href="/tags/spider/" style="font-size: 10px;">spider</a> <a href="/tags/房/" style="font-size: 20px;">房</a> <a href="/tags/爬虫/" style="font-size: 10px;">爬虫</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Articles récents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/07/19/git-patch/">两个commit的差异保存到本地</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/18/ElasticSearch-Intro/">【学习笔记】ElasticSearch入门</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/18/BeautifulSoup/">【学习笔记】BeautifulSoup－爬虫文档解析器</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/12/House-1/">【数据找房】1 用爬虫搜寻房屋数据</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/11/Mrakdown/">Markdown 11种基本语法</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 ZhangAnam<br>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

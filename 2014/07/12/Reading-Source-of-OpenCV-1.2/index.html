@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>【OpenCV源码阅读】1.2 Mat的内存管理 | ZhangAnam</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="#OpenCV源码阅读#我阅读的版本是OpenCV2.4.8
+##第一章 Mat##
+本章主要内容：Mat类的结构、内存管理、运算、_InputArray类">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【OpenCV源码阅读】1.2 Mat的内存管理">
+<meta property="og:url" content="https://zhanganam.github.io/2014/07/12/Reading-Source-of-OpenCV-1.2/index.html">
+<meta property="og:site_name" content="ZhangAnam">
+<meta property="og:description" content="#OpenCV源码阅读#我阅读的版本是OpenCV2.4.8
+##第一章 Mat##
+本章主要内容：Mat类的结构、内存管理、运算、_InputArray类">
+<meta property="og:image" content="http://img.blog.csdn.net/20140712163410453?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvenluaW5jcXVwdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="http://img.blog.csdn.net/20140712163433890?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvenluaW5jcXVwdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="http://img.blog.csdn.net/20140712163451046?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvenluaW5jcXVwdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="http://img.blog.csdn.net/20140712163505937?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvenluaW5jcXVwdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:updated_time" content="2016-07-18T14:34:29.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【OpenCV源码阅读】1.2 Mat的内存管理">
+<meta name="twitter:description" content="#OpenCV源码阅读#我阅读的版本是OpenCV2.4.8
+##第一章 Mat##
+本章主要内容：Mat类的结构、内存管理、运算、_InputArray类">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20140712163410453?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvenluaW5jcXVwdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+  
+    <link rel="alternate" href="/atom.xml" title="ZhangAnam" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">ZhangAnam</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">A clay idol who want to be Avalokitesvara!</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="Flux RSS"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://zhanganam.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Reading-Source-of-OpenCV-1.2" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/12/Reading-Source-of-OpenCV-1.2/" class="article-date">
+  <time datetime="2014-07-11T16:00:00.000Z" itemprop="datePublished">2014-07-12</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/机器视觉/">机器视觉</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      【OpenCV源码阅读】1.2 Mat的内存管理
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>#OpenCV源码阅读#<br>我阅读的版本是OpenCV<code>2.4.8</code></p>
+<p>##第一章 Mat##</p>
+<p>本章主要内容：<code>Mat类的结构</code>、<code>内存管理</code>、<code>运算</code>、<code>_InputArray类</code></p>
+<a id="more"></a>
+<p>###1.2 Mat的内存管理###</p>
+<p>图像数据量大，不妥善管理好内存会产生很大的问题。OpenCV1.X中多采用C的结构，需要用户自己管理内存，在图像不再使用时调用CvRelease。OpenCV2.X中采用C++面向对象的方式，内存可以由自动申请和释放。</p>
+<p>####1.2.1 图像头与图像内容####</p>
+<p>OpenCV中，图像的头与图像内容是分开的。如下面这段代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Mat A = Mat::zeros(<span class="number">800</span>,<span class="number">600</span>, CV_8UC3);  </div><div class="line">Mat B = A;</div></pre></td></tr></table></figure>
+<p>① Mat::zeros(800,600, CV_8UC3)是一个静态函数，用于返回一个全部是0的矩阵，该函数返回的MatExpr对象将是一个右值（有内存，但没有变量指向它），暂且我们叫他TMP。</p>
+<p><img src="http://img.blog.csdn.net/20140712163410453?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvenluaW5jcXVwdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<p>②Mat A = TMP，执行这一行代码，需要经历两个阶段：第一阶段，TMP的类型是MatExpr，此处会执行类型转换函数MatExpr:: operator Mat()；</p>
+<p><img src="http://img.blog.csdn.net/20140712163433890?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvenluaW5jcXVwdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<p>第二阶段是Mat A的构造方法，Mat::Mat(constMat&amp; m)，从一个已有的Mat构造新的Mat。该代码完成后，TMP作为右值会被销毁掉。</p>
+<p><img src="http://img.blog.csdn.net/20140712163451046?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvenluaW5jcXVwdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<p>③Mat B = A 也是执行B的构造方法Mat::Mat(const Mat&amp; m) ，从一个已有的Mat构造新的Mat。</p>
+<p><img src="http://img.blog.csdn.net/20140712163505937?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvenluaW5jcXVwdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<p>TMP、A、B虽然三个Mat（MatExpr）对象，他们分别有自己的头，但他们却只有一个图像内容。图像自己带有一个计数器，当计数器为0时，数据才有可能销毁。</p>
+<p>####1.2.2 内存申请####</p>
+<p>在【core.hpp第1465行】定义了classCV_EXPORTS MatAllocator，他是个抽象类，供用户自定义申请内存的方法，如果用户没有指定内存申请器，那么Mat会使用默认的申请方法。</p>
+<p>Mat::ones和Mat::zeros两个函数的内存申请在MatExpr转换为Mat的函数中，见【mat.hpp第1221行】operatorMat() const函数共有三条语句：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">operator</span> <span class="title">Mat</span><span class="params">()</span> <span class="keyword">const</span>  </span></div><div class="line">&#123;  </div><div class="line">   Mat m;  </div><div class="line">   op-&gt;assign(*<span class="keyword">this</span>, m);  </div><div class="line">   <span class="keyword">return</span> m;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>op显得非常神秘，他是函数操作抽象类，他的子类在matop.cpp中，此处的op是MatOp_Initializer函数初始化操作，在MatOp_Initializer::assign函数中【matop.cpp第1554行】中调用了Mat::create函数，从而申请了内存。</p>
+<p>imread函数则在【loadsave.cpp（sources\modules\highgui\src\loadsave.cpp）第235行】调用了mat::create函数。</p>
+<p>顺带一提，OpenCV1.x中CvLoadImage中的内存申请在【array.cp（sources\modules\core\src\array.cpp）第830行】中调用cvAlloc函数。</p>
+<p>无论是mat::create函数还是cvAlloc函数，他们都最终指向了同一个函数：【alloc.cpp（sources\modules\core\src\alloc.cpp）第62行】fastMalloc函数。</p>
+<p>tip:在看这一段代码时，看到一个有趣的小函数：</p>
+<p>在core.hpp第343行</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> inlinesize_t <span class="title">alignSize</span><span class="params">(<span class="keyword">size_t</span> sz, <span class="keyword">int</span> n)</span>  </span></div><div class="line">&#123;  </div><div class="line">    assert((n &amp; (n - <span class="number">1</span>)) == <span class="number">0</span>); <span class="comment">// n is apower of 2  </span></div><div class="line">    <span class="keyword">return</span> (sz + n<span class="number">-1</span>) &amp; -n;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>该函数的作用是求不比sz小的数中能被n整除的最小数，n是2的整数次方数。这句话比较拗口，举个例子，sz=23，n=16，那么23、24、25…中第一个16的倍数是32，那么答案就是32。再例如，sz=16，n=8，那么在16、17、18…中第一个8的倍数是16。</p>
+<p>如果这个函数让我写的话，会写成下面这个摸样：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> inlinesize_t <span class="title">alignSize</span><span class="params">(<span class="keyword">size_t</span> sz, <span class="keyword">int</span> n)</span>  </span></div><div class="line">&#123;  </div><div class="line">    assert((n &amp; (n - <span class="number">1</span>)) == <span class="number">0</span>); <span class="comment">// n is apower of 2  </span></div><div class="line">    <span class="keyword">return</span> ((sz/n)+(sz%n)&gt;<span class="number">0</span>?<span class="number">1</span>:<span class="number">0</span>)*n;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>OpenCV源代码中2个取反、2个加法、一个与运算，而我的代码中1个整除、1个取余、一个判断、1个乘法，确实我的代码远不如源代码高效。</p>
+<p>解析这个算式：sz + n-1：sz到sz+n-1这n个数中，必有一个数是n的倍数，而这个数就是答案。那么sz + n-1对n整除就可以得到答案。n是2的整数次方（设K次方），-n在二进制上表现就是最后K位是0，其他都是1，如4是2的2次方，那么-4的二进制表达就是(1111 1111 , 1111 1111 , 1111 1111 , 1111 1100)2，与这个数做与运算，就是整除操作。</p>
+<p>####1.2.3 Mat操作中的内存####</p>
+<p>Mat在赋值运算，构造方法里，都没有新的内存申请。</p>
+<p>只有调用Mat::copyTo函数，才会产生新的数据。</p>
+<p>值得注意的是以下两种操作。</p>
+<ul>
+<li>矩阵运算<strong>会产生</strong>新的内存。</li>
+</ul>
+<p>如</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Mat A;  </div><div class="line">Mat B;  </div><div class="line"></div><div class="line"><span class="comment">//省略给A、B初始化数据的过程  </span></div><div class="line"></div><div class="line">Mat C = A + B;</div></pre></td></tr></table></figure>
+<p>A + B的结果是一个MatExpr。MatExpr转换成Mat往往是产生新的内存的。</p>
+<ul>
+<li>POI操作是<strong>不产生</strong>新的内存的</li>
+</ul>
+<p>======待续======</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://zhanganam.github.io/2014/07/12/Reading-Source-of-OpenCV-1.2/" data-id="ciwovizem0004ef41pjg4h9x1" class="article-share-link">Partager</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenCV/">OpenCV</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/06/29/Ignore-File-Locally/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Récent</strong>
+      <div class="article-nav-title">
+        
+          本地文件不上传到git服务器
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/07/05/Reading-Source-of-OpenCV-1.1/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Ancien</strong>
+      <div class="article-nav-title">【OpenCV源码阅读】1.1 Mat的结构</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Catégories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Markdown/">Markdown</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据分析/">数据分析</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/机器视觉/">机器视觉</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Mot-clés</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/BeautifulSoup/">BeautifulSoup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ES/">ES</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Markdown/">Markdown</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenCV/">OpenCV</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spider/">spider</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/房/">房</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/爬虫/">爬虫</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Nuage de mot-clés</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/BeautifulSoup/" style="font-size: 20px;">BeautifulSoup</a> <a href="/tags/ES/" style="font-size: 10px;">ES</a> <a href="/tags/Markdown/" style="font-size: 10px;">Markdown</a> <a href="/tags/OpenCV/" style="font-size: 20px;">OpenCV</a> <a href="/tags/git/" style="font-size: 20px;">git</a> <a href="/tags/spider/" style="font-size: 10px;">spider</a> <a href="/tags/房/" style="font-size: 20px;">房</a> <a href="/tags/爬虫/" style="font-size: 10px;">爬虫</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Articles récents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/07/19/git-patch/">两个commit的差异保存到本地</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/18/ElasticSearch-Intro/">【学习笔记】ElasticSearch入门</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/18/BeautifulSoup/">【学习笔记】BeautifulSoup－爬虫文档解析器</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/12/House-1/">【数据找房】1 用爬虫搜寻房屋数据</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/11/Mrakdown/">Markdown 11种基本语法</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 ZhangAnam<br>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
